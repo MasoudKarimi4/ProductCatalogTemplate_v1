@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "340137994723",
-    "project_id": "fir-app2-6a044",
-    "storage_bucket": "fir-app2-6a044.appspot.com"
+    "project_number": "721323715338",
+    "project_id": "lab5-f1191",
+    "storage_bucket": "lab5-f1191.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:340137994723:android:0dc1afd6aa3512bc0218d6",
+        "mobilesdk_app_id": "1:721323715338:android:8481d8d5273b5298a428f3",
         "android_client_info": {
-          "package_name": "com.example.firebaseapp2"
+          "package_name": "com.masoudk.lab5"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCxFZU58mT45RXHXt81u8lN4Fus00ADhb8"
+          "current_key": "AIzaSyAh9ldtkA5fFBalS7YrpVGNPUcTGzygH94"
         }
       ],
       "services": {

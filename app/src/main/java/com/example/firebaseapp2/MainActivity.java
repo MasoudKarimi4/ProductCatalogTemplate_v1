@@ -1,5 +1,6 @@
 package com.example.firebaseapp2;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.Firebase;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -33,6 +35,8 @@ public class MainActivity extends AppCompatActivity {
     Button buttonAddProduct;
     ListView listViewProducts;
 
+    DatabaseReference databaseProducts;
+
     List<Product> products;
 
     @Override
@@ -46,6 +50,8 @@ public class MainActivity extends AppCompatActivity {
         buttonAddProduct = (Button) findViewById(R.id.addButton);
 
         products = new ArrayList<>();
+
+        databaseProducts = FirebaseDatabase.getInstance().getReference("products");
 
         //adding an onclicklistener to button
         buttonAddProduct.setOnClickListener(new View.OnClickListener() {
@@ -69,7 +75,34 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+
+        databaseProducts.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                products.clear();
+
+                for (DataSnapshot postSnapshot : snapshot.getChildren()) {
+                    Product product = postSnapshot.getValue(Product.class);
+                    products.add(product);
+                }
+
+                ProductList productsAdapter = new ProductList(MainActivity.this, products);
+                listViewProducts.setAdapter(productsAdapter);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Handle database read error if necessary
+            }
+        });
+
+
+    //    @Override
+        //public void onCancelled (@NonNull DatabaseError error){
+
+      //  }
     }
+
 
 
     private void showUpdateDeleteDialog(final String productId, String productName) {
@@ -111,16 +144,46 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateProduct(String id, String name, double price) {
 
-        Toast.makeText(getApplicationContext(), "NOT IMPLEMENTED YET", Toast.LENGTH_LONG).show();
+        DatabaseReference dR = FirebaseDatabase.getInstance().getReference("products").child(id);
+
+        Product product = new Product(id, name, price);
+
+        dR.setValue(product);
+
+        Toast.makeText(getApplicationContext(), "Product Updated", Toast.LENGTH_LONG).show();
+
     }
 
     private void deleteProduct(String id) {
 
-        Toast.makeText(getApplicationContext(), "NOT IMPLEMENTED YET", Toast.LENGTH_LONG).show();
+        DatabaseReference dR = FirebaseDatabase.getInstance().getReference("products").child(id);
+
+        dR.removeValue();
+
+        Toast.makeText(getApplicationContext(), "Product Deleted", Toast.LENGTH_LONG).show();
+       // return true;
+
     }
 
     private void addProduct() {
 
-        Toast.makeText(this, "NOT IMPLEMENTED YET", Toast.LENGTH_LONG).show();
+        String name = editTextName.getText().toString().trim();
+        double price = Double.parseDouble(String.valueOf(editTextPrice.getText().toString()));
+
+        if(!TextUtils.isEmpty(name)){
+
+            String id = databaseProducts.push().getKey();
+
+            Product product = new Product(id, name, price);
+
+            databaseProducts.child(id).setValue(product);
+
+            editTextName.setText("");
+            editTextPrice.setText("");
+
+            Toast.makeText(this, "Product added", Toast.LENGTH_LONG).show();
+        } else{
+            Toast.makeText(this, "Please enter a name", Toast.LENGTH_LONG).show();
+        }
     }
 }
